@@ -4,3 +4,4 @@ War game made in Java (Swing) for the 2015.1 puc-rio object oriented class
 ## Authors
 * Hugo Grochau
 * Lucas Menezes
+* Rômulo Dusi
