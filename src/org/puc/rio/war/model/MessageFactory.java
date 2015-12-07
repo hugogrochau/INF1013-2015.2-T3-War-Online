@@ -1,6 +1,4 @@
-package org.puc.rio.war.server;
-
-import org.puc.rio.war.model.Message;
+package org.puc.rio.war.model;
 
 public class MessageFactory {
 	public static Message nameMessage(String name) {

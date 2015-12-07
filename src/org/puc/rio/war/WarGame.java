@@ -12,6 +12,7 @@ import org.puc.rio.war.model.Card;
 import org.puc.rio.war.model.Continent;
 import org.puc.rio.war.model.Deck;
 import org.puc.rio.war.model.Map;
+import org.puc.rio.war.model.MessageFactory;
 import org.puc.rio.war.model.Player;
 import org.puc.rio.war.model.Territory;
 import org.puc.rio.war.model.TerritoryCard;
@@ -23,7 +24,6 @@ import org.puc.rio.war.objective.DestroyPlayerObjective;
 import org.puc.rio.war.objective.WarObjective;
 import org.puc.rio.war.serialize.WarDeserializer;
 import org.puc.rio.war.serialize.WarSerializer;
-import org.puc.rio.war.server.MessageFactory;
 import org.puc.rio.war.viewcontroller.WarFrame;
 
 import com.google.gson.Gson;
