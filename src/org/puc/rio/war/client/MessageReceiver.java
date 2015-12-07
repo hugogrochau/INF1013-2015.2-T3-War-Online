@@ -23,15 +23,17 @@ public class MessageReceiver implements Runnable {
 		while (true) {
 			try {
 				Message msg = (Message) serverStream.readObject();
-				if (msg.getHeader() == Message.Header.STATE) {
-					System.out.println("Received message:");
+					System.out.println("Received message:");	
 					System.out.println(msg.getContent());
-					WarGame.getInstance().loadGame(msg.getContent());
-				} else if (msg.getHeader() == Message.Header.NAME) {
-					WarGame.getInstance().addPlayer(msg.getContent(), false);
-				}
+					if (msg.getHeader() == Message.Header.NAME) {
+						WarGame.getInstance().addPlayer(msg.getContent(), false);
+					} else {
+						boolean first = !WarGame.getInstance().hasStarted();
+						WarGame.getInstance().loadGame(msg.getContent());
+						WarGame.getInstance().getWarFrame().update(first);
+					}
 			} catch (ClassNotFoundException classNot) {
-				System.err.println("data received in unknown format");
+				System.err.println("Data received in unknown format");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

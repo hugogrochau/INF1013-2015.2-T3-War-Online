@@ -34,10 +34,9 @@ public class WarState extends Observable {
 		this.currentTurnState = TurnState.PLACING_NEW_ARMIES;
 	}
 
-	public WarState(String names[], Map map, Deck deck) {
-		List<Player> newPlayers = new ArrayList<Player>();
-		for (int i = 0; i < names.length; i++) {
-			newPlayers.add(new Player(names[i], Player.playerColors[i]));
+	public WarState(Map map, Deck deck, List<String> names) {
+		for (String name: names) {
+			this.players.add(new Player(name, Player.playerColors[names.indexOf(name)]));
 		}
 		this.map = map;
 		this.deck = deck;

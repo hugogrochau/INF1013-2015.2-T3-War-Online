@@ -12,7 +12,6 @@ import org.puc.rio.war.model.Card;
 import org.puc.rio.war.model.Continent;
 import org.puc.rio.war.model.Deck;
 import org.puc.rio.war.model.Map;
-import org.puc.rio.war.model.Message;
 import org.puc.rio.war.model.Player;
 import org.puc.rio.war.model.Territory;
 import org.puc.rio.war.model.TerritoryCard;
@@ -24,6 +23,7 @@ import org.puc.rio.war.objective.DestroyPlayerObjective;
 import org.puc.rio.war.objective.WarObjective;
 import org.puc.rio.war.serialize.WarDeserializer;
 import org.puc.rio.war.serialize.WarSerializer;
+import org.puc.rio.war.server.MessageFactory;
 import org.puc.rio.war.viewcontroller.WarFrame;
 
 import com.google.gson.Gson;
@@ -37,7 +37,7 @@ public class WarGame {
 	private WarState warState = null;
 	private Client client;
 	private String myName;
-	private List<String> playerNames = new ArrayList<String>();
+	private List<String> playerNames = new ArrayList<String>(3);
 	public final String SERVER_IP = "127.0.0.1";
 
 	private WarGame() {
@@ -82,9 +82,9 @@ public class WarGame {
 		}
 	}
 
-	public void startGame(String names[]) {
+	public void startGame(List<String> names) {
 		/* Randomize player order */
-		this.warState = new WarState(names, new Map(), new Deck());
+		this.warState = new WarState(new Map(), new Deck(), names);
 		Util.loadTerritories(this.getState().getMap(), this.getState().getDeck());
 		this.getState().getDeck().addJoker(2);
 		this.getState().getDeck().shuffle();
@@ -236,8 +236,8 @@ public class WarGame {
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.showCards(true);
 		}
-		WarSerializer s = new WarSerializer();
-		this.getClient().sendMessage(new Message(Message.Header.STATE, s.serialize(this.getState(), null, null).toString()));
+		WarSerializer ws = new WarSerializer();
+		this.getClient().sendMessage(MessageFactory.stateMessage(ws.serialize(this.getState(), null, null).toString()));
 
 		/* if player is out of the game */
 		if (this.getMap().getTerritoriesByOwner(this.getCurrentPlayer()).size() == 0) {
@@ -468,16 +468,26 @@ public class WarGame {
 
 	public void addPlayer(String name, boolean self) {
 		this.playerNames.add(name);
-		if (self) { // last player starts game
-			this.getClient().sendMessage(new Message(Message.Header.NAME, name));
+		if (self) {
+			this.getClient().sendMessage(MessageFactory.nameMessage(name));
 			this.myName = name;
-			if (this.playerNames.size() >= WarLogic.MIN_PLAYERS) {
-				WarGame.getInstance().startGame((String[])this.playerNames.toArray());
-			}
+		} 
+		// first player starts game
+		System.out.println("Added player: " + name);
+		if (this.playerNames.size() >= WarLogic.MIN_PLAYERS) {
+			System.out.println("Have " + WarLogic.MIN_PLAYERS + " players, starting game");
+			WarGame.getInstance().startGame(this.playerNames);
+			WarSerializer ws = new WarSerializer();
+			this.getClient().sendMessage(MessageFactory.stateMessage(ws.serialize(this.getState(), null, null).toString()));
 		}
 	}
 	
 	public boolean isMyTurn() {
 		return this.myName.equals(this.getState().getCurrentPlayer().getName());
 	}
+
+	public boolean hasStarted() {
+		return this.warState != null;
+	}
+
 }

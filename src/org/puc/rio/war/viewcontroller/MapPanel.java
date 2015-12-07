@@ -224,7 +224,10 @@ public class MapPanel extends JPanel implements Observer {
 
 		@Override
 		public void mouseClicked(MouseEvent me) {
-			for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
+			if (!WarGame.getInstance().isMyTurn()) {
+				return;
+			}
+ 			for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 				if (t.getPolygon().contains(
 						me.getX()
 								/ WarGame.getInstance().getWarFrame()

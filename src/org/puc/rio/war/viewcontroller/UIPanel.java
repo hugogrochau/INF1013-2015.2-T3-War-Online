@@ -96,6 +96,8 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 
 				if (playerNameTextField.getText().length() > 0) {
 					WarGame.getInstance().addPlayer(playerNameTextField.getText(), true);
+					submitButton.setText("Waiting for other players");
+					submitButton.setEnabled(false);
 				}
 				
 			}
@@ -301,6 +303,13 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 		this.statusLabel.setBackground(currentPlayer.getColor());
 		this.statusLabel.setForeground(Player.getForegroundColor(currentPlayer.getColor()));
 		this.actionButton.setText(actionString);
+		
+		if (!WarGame.getInstance().isMyTurn()) {
+			this.actionButton.setEnabled(false);
+			this.showObjectiveButton.setEnabled(false);
+			this.showCardsButton.setEnabled(false);
+			this.endTurnButton.setEnabled(false);
+		}
 	}
 
 	@Override
